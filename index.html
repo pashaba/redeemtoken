@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Generate Kode Akses</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 16px;
+  }
+  .card {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  }
+  h1 { font-size: 20px; margin: 0 0 20px; }
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #6366f1;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .6; cursor: not-allowed; }
+  .code-box {
+    margin-top: 20px;
+    padding: 16px;
+    background: #0f172a;
+    border: 1px dashed #6366f1;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    display: none;
+  }
+  .list { margin-top: 24px; font-size: 13px; color: #94a3b8; }
+  .list div { padding: 6px 0; border-bottom: 1px solid #334155; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔑 Generator Kode Akses</h1>
+    <button id="genBtn">Generate Kode Baru</button>
+    <div class="code-box" id="codeBox"></div>
+    <div class="list" id="list"></div>
+  </div>
+
+<script>
+const genBtn = document.getElementById('genBtn');
+const codeBox = document.getElementById('codeBox');
+const list = document.getElementById('list');
+
+async function generate() {
+  genBtn.disabled = true;
+  genBtn.textContent = 'Generating...';
+  try {
+    const res = await fetch('/api/generate', { method: 'POST' });
+    const data = await res.json();
+    if (data.code) {
+      codeBox.style.display = 'block';
+      codeBox.textContent = data.code;
+      loadList();
+    } else {
+      alert('Gagal generate: ' + data.error);
+    }
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+  genBtn.disabled = false;
+  genBtn.textContent = 'Generate Kode Baru';
+}
+
+async function loadList() {
+  const res = await fetch('/api/codes');
+  const data = await res.json();
+  list.innerHTML = data.map(c =>
+    `<div>${c.code} — ${c.is_used ? '❌ terpakai' : '✅ tersedia'}</div>`
+  ).join('');
+}
+
+genBtn.addEventListener('click', generate);
+loadList();
+</script>
+</body>
+</html>
