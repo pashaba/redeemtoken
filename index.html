@@ -52,8 +52,18 @@
     font-weight: 700;
     display: none;
   }
-  .list { margin-top: 24px; font-size: 13px; color: #94a3b8; }
-  .list div { padding: 6px 0; border-bottom: 1px solid #334155; }
+  .warn {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #94a3b8;
+    text-align: center;
+    display: none;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #334155;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -61,13 +71,15 @@
     <h1>🔑 Generator Kode Akses</h1>
     <button id="genBtn">Generate Kode Baru</button>
     <div class="code-box" id="codeBox"></div>
-    <div class="list" id="list"></div>
+    <button class="copy-btn" id="copyBtn">📋 Salin Kode</button>
+    <div class="warn" id="warn">⚠️ Kode ini cuma tampil sekali. Catat/simpan sekarang sebelum tutup halaman.</div>
   </div>
 
 <script>
 const genBtn = document.getElementById('genBtn');
 const codeBox = document.getElementById('codeBox');
-const list = document.getElementById('list');
+const copyBtn = document.getElementById('copyBtn');
+const warn = document.getElementById('warn');
 
 async function generate() {
   genBtn.disabled = true;
@@ -78,7 +90,8 @@ async function generate() {
     if (data.code) {
       codeBox.style.display = 'block';
       codeBox.textContent = data.code;
-      loadList();
+      copyBtn.style.display = 'block';
+      warn.style.display = 'block';
     } else {
       alert('Gagal generate: ' + data.error);
     }
@@ -89,16 +102,13 @@ async function generate() {
   genBtn.textContent = 'Generate Kode Baru';
 }
 
-async function loadList() {
-  const res = await fetch('/api/codes');
-  const data = await res.json();
-  list.innerHTML = data.map(c =>
-    `<div>${c.code} — ${c.is_used ? '❌ terpakai' : '✅ tersedia'}</div>`
-  ).join('');
-}
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(codeBox.textContent);
+  copyBtn.textContent = '✅ Tersalin!';
+  setTimeout(() => (copyBtn.textContent = '📋 Salin Kode'), 1500);
+});
 
 genBtn.addEventListener('click', generate);
-loadList();
 </script>
 </body>
 </html>
