@@ -5,74 +5,241 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Generate Kode Akses</title>
 <link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
+  :root{
+    --ink:#111111;
+    --paper:#FFF7E6;
+    --card:#FFFFFF;
+    --lime:#C6FF3D;
+    --purple:#7C5CFF;
+    --pink:#FF5CA8;
+    --shadow: 6px 6px 0 var(--ink);
+    --shadow-sm: 4px 4px 0 var(--ink);
+  }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: system-ui, -apple-system, sans-serif;
-    background: #0f172a;
-    color: #e2e8f0;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle, #11111114 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+    color: var(--ink);
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 16px;
+    padding: 20px;
   }
+
   .card {
-    background: #1e293b;
-    border-radius: 16px;
-    padding: 28px;
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 26px;
     width: 100%;
-    max-width: 420px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    max-width: 440px;
   }
-  h1 { font-size: 20px; margin: 0 0 20px; }
-  button {
+
+  .eyebrow{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    background: var(--lime);
+    border:2px solid var(--ink);
+    border-radius:999px;
+    padding:4px 10px;
+    margin-bottom:12px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    line-height:1.2;
+  }
+  .sub{
+    font-size:13px;
+    color:#555;
+    margin:0 0 20px;
+  }
+
+  button#genBtn {
     width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 10px;
-    background: #6366f1;
+    padding: 15px;
+    border: 3px solid var(--ink);
+    border-radius: 12px;
+    background: var(--purple);
     color: white;
+    font-family:'Space Grotesk', sans-serif;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 800;
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform .08s ease;
   }
-  button:disabled { opacity: .6; cursor: not-allowed; }
+  button#genBtn:active:not(:disabled){
+    transform: translate(3px,3px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  button#genBtn:disabled { opacity: .6; cursor: not-allowed; }
+
   .code-box {
     margin-top: 20px;
-    padding: 16px;
-    background: #0f172a;
-    border: 1px dashed #6366f1;
-    border-radius: 10px;
+    padding: 18px;
+    background: var(--lime);
+    border: 3px solid var(--ink);
+    border-radius: 12px;
     text-align: center;
-    font-size: 22px;
-    letter-spacing: 2px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 24px;
+    letter-spacing: 3px;
     font-weight: 700;
     display: none;
+    word-break: break-all;
   }
+
   .warn {
     margin-top: 12px;
-    font-size: 12px;
-    color: #94a3b8;
-    text-align: center;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #7a4b00;
+    background:#FFE8B0;
+    border:2px dashed var(--ink);
+    border-radius:8px;
+    padding:8px 10px;
+    text-align: left;
     display: none;
   }
+
   .copy-btn {
+    width:100%;
     margin-top: 10px;
-    background: #334155;
+    padding:12px;
+    border: 3px solid var(--ink);
+    border-radius: 12px;
+    background: var(--pink);
+    color: var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 800;
+    font-size:14px;
+    cursor:pointer;
+    box-shadow: var(--shadow-sm);
     display: none;
   }
+  .copy-btn:active{
+    transform: translate(3px,3px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+
+  /* Tutorial */
+  .tutorial {
+    margin-top: 26px;
+    border-top: 3px dashed var(--ink);
+    padding-top: 20px;
+  }
+  .tutorial-title{
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .tutorial-title::before{
+    content:"";
+    width:10px;height:10px;
+    background:var(--purple);
+    border:2px solid var(--ink);
+    display:inline-block;
+    transform: rotate(45deg);
+  }
+
+  .steps { list-style:none; margin:0; padding:0; }
+  .step {
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:10px 0;
+  }
+  .step + .step{
+    border-top: 2px dotted #d8d3c4;
+  }
+  .num {
+    flex:none;
+    width:28px; height:28px;
+    border:2.5px solid var(--ink);
+    border-radius:8px;
+    background: var(--paper);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:13px;
+  }
+  .step:nth-child(1) .num{ background: var(--lime); }
+  .step:nth-child(2) .num{ background: var(--purple); color:#fff; }
+  .step:nth-child(3) .num{ background: var(--pink); }
+  .step:nth-child(4) .num{ background: var(--ink); color:#fff; }
+
+  .step-text b{ display:block; font-size:13.5px; font-weight:700; }
+  .step-text span{ font-size:12px; color:#666; }
 </style>
 </head>
 <body>
   <div class="card">
+    <span class="eyebrow">Polar.id · Akses</span>
     <h1>🔑 Generator Kode Akses</h1>
+    <p class="sub">Bikin kode redeem sekali pakai buat aktivasi lewat bot.</p>
+
     <button id="genBtn">Generate Kode Baru</button>
     <div class="code-box" id="codeBox"></div>
     <button class="copy-btn" id="copyBtn">📋 Salin Kode</button>
     <div class="warn" id="warn">⚠️ Kode ini cuma tampil sekali. Catat/simpan sekarang sebelum tutup halaman.</div>
+
+    <div class="tutorial">
+      <div class="tutorial-title">Cara pakai kodenya</div>
+      <ol class="steps">
+        <li class="step">
+          <span class="num">1</span>
+          <span class="step-text">
+            <b>Salin kode</b>
+            <span>Tekan tombol "📋 Salin Kode" di atas setelah kode muncul.</span>
+          </span>
+        </li>
+        <li class="step">
+          <span class="num">2</span>
+          <span class="step-text">
+            <b>Buka menu Redeem Code</b>
+            <span>Di chat bot, klik/ketuk tombol atau menu "Redeem Code".</span>
+          </span>
+        </li>
+        <li class="step">
+          <span class="num">3</span>
+          <span class="step-text">
+            <b>Tempel kode ke chat</b>
+            <span>Paste kode yang sudah disalin ke kolom chat bot.</span>
+          </span>
+        </li>
+        <li class="step">
+          <span class="num">4</span>
+          <span class="step-text">
+            <b>Kirim</b>
+            <span>Tekan kirim, bot akan otomatis verifikasi & aktivasi.</span>
+          </span>
+        </li>
+      </ol>
+    </div>
   </div>
 
 <script>
